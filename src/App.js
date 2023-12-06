@@ -65,12 +65,45 @@ function App() {
     setNewRecipe({ ...newRecipe, [name]: value });
   };
 
+  // Add new recipe to database
+  const handleNewRecipe = async (e, newFormRecipe) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("/api/recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newFormRecipe)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setRecipes([...recipes, data.recipe]);
+        setShowNewRecipeForm(false);
+        setNewRecipe({
+          title: "",
+          ingredients: "",
+          instructions: "",
+          servings: 1,
+          description: "",
+          image_url: "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        });
+      } else {
+        console.log("Could not add recipe");
+      }
+    } catch (error) {
+      console.error("An error occurred during the request: ", error);
+    }
+  };
+
   return (
     <div className='recipe-app'>
       <Header showRecipeForm={showRecipeForm} />
-      {showNewRecipeForm && <NewRecipeForm newRecipe={newRecipe} hideRecipeForm={hideRecipeForm} onUpdateForm={onUpdateForm} />}
+      {showNewRecipeForm && <NewRecipeForm newRecipe={newRecipe} hideRecipeForm={hideRecipeForm} onUpdateForm={onUpdateForm} handleNewRecipe={handleNewRecipe} />}
       {selectedRecipe && <RecipeFull selectedRecipe={selectedRecipe} handleUnselectRecipe={handleUnselectRecipe} />}
-      {!selectedRecipe && (
+      {!selectedRecipe && !showNewRecipeForm && (
         <div className="recipe-list">
           {recipes.map((recipe) => (
             <RecipeExcerpt recipe={recipe} key={recipe.id} handleSelectRecipe={handleSelectRecipe} />
