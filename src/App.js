@@ -3,6 +3,9 @@ import Header from "./components/Header";
 import RecipeExcerpt from "./components/RecipeExcerpt";
 import RecipeFull from "./components/RecipeFull";
 import NewRecipeForm from "./components/NewRecipeForm";
+import displayToast from "./helpers/toastHelper";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 import "./App.css";
 
 function App() {
@@ -27,11 +30,10 @@ function App() {
         const data = await response.json();
         setRecipes(data);
       } else {
-        console.log("Could not fetch recipes");
+        displayToast("Could not fetch recipes", "error");
       }
     } catch (error) {
-      console.error("An error occurred during the request: ", error);
-      console.log("An unexpected error occurred. Please try again later.");
+      displayToast("An unexpected error occurred. Please try again later.", "error");
     }
   };
 
@@ -86,7 +88,7 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setRecipes([...recipes, data.recipe]);
-        console.log("Recipe added");
+        displayToast("Recipe added", "success");
         setShowNewRecipeForm(false);
         setNewRecipe({
           title: "",
@@ -97,10 +99,10 @@ function App() {
           image_url: "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
         });
       } else {
-        console.log("Could not add recipe");
+        displayToast("Could not add recipe", "error");
       }
     } catch (error) {
-      console.error("An error occurred during the request: ", error);
+      displayToast("An unexpected error occurred. Please try again later.", "error");
     }
   };
 
@@ -121,12 +123,12 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setRecipes(recipes.map((recipe) => recipe.id === id ? data.recipe : recipe));
-        console.log("Recipe updated");
+        displayToast("Recipe updated", "success");
       } else {
-        console.log("Could not edit recipe");
+        displayToast("Could not edit recipe", "error");
       }
     } catch (error) {
-      console.error("An error occurred during the request: ", error);
+      displayToast("An unexpected error occurred. Please try again later.", "error");
     }
     setSelectedRecipe(null);
   };
@@ -141,12 +143,12 @@ function App() {
       if (response.ok) {
         setRecipes(recipes.filter((recipe) => recipe.id !== recipeId))
         setSelectedRecipe(null);
-        console.log("Recipe deleted");
+        displayToast("Recipe deleted", "success");
       } else {
-        console.log("Could not delete recipe");
+        displayToast("Could not delete recipe", "error");
       }
     } catch (error) {
-      console.error("An error occurred during the request: ", error);
+      displayToast("An unexpected error occurred. Please try again later.", "error");
     }
   };
 
@@ -184,6 +186,7 @@ function App() {
           ))}
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 }
