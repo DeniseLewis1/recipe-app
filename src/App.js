@@ -17,6 +17,7 @@ function App() {
     image_url: "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" //default
   });
   const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch all recipes
   const fetchAllRecipes = async () => {
@@ -149,14 +150,30 @@ function App() {
     }
   };
 
+  // Update search term
+  const updateSearchTerm = (text) => {
+    setSearchTerm(text);
+  };
+
+  // Filter recipes using search term
+  const handleSearch = () => {
+    const searchResults = recipes.filter((recipe) => {
+      const valuesToSearch = [recipe.title, recipe.ingredients, recipe.description];
+      return valuesToSearch.some((value) => value.toLowerCase().includes(searchTerm.toLowerCase()));
+    });
+    return searchResults;
+  };
+
+  const displayedRecipes = searchTerm ? handleSearch() : recipes;
+
   return (
     <div className='recipe-app'>
-      <Header showRecipeForm={showRecipeForm} />
+      <Header showRecipeForm={showRecipeForm} searchTerm={searchTerm} updateSearchTerm={updateSearchTerm} />
       {showNewRecipeForm && <NewRecipeForm newRecipe={newRecipe} hideRecipeForm={hideRecipeForm} onUpdateForm={onUpdateForm} handleNewRecipe={handleNewRecipe} />}
       {selectedRecipe && <RecipeFull selectedRecipe={selectedRecipe} handleUnselectRecipe={handleUnselectRecipe} onUpdateForm={onUpdateForm} handleUpdateRecipe={handleUpdateRecipe} handleDeleteRecipe={handleDeleteRecipe} />}
       {!selectedRecipe && !showNewRecipeForm && (
         <div className="recipe-list">
-          {recipes.map((recipe) => (
+          {displayedRecipes.map((recipe) => (
             <RecipeExcerpt recipe={recipe} key={recipe.id} handleSelectRecipe={handleSelectRecipe} />
           ))}
         </div>
