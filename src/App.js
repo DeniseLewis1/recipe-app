@@ -120,7 +120,7 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setRecipes(recipes.map((recipe) => recipe.id === id ? data.recipe : recipe));
-        console.log("Recipes updated");
+        console.log("Recipe updated");
       } else {
         console.log("Could not edit recipe");
       }
@@ -130,11 +130,30 @@ function App() {
     setSelectedRecipe(null);
   };
 
+  // Delete a recipe
+  const handleDeleteRecipe = async (recipeId) => {
+    try {
+      const response = await fetch(`/api/recipes/${recipeId}`, {
+        method: "DELETE"
+      });
+
+      if (response.ok) {
+        setRecipes(recipes.filter((recipe) => recipe.id !== recipeId))
+        setSelectedRecipe(null);
+        console.log("Recipe deleted");
+      } else {
+        console.log("Could not delete recipe");
+      }
+    } catch (error) {
+      console.error("An error occurred during the request: ", error);
+    }
+  };
+
   return (
     <div className='recipe-app'>
       <Header showRecipeForm={showRecipeForm} />
       {showNewRecipeForm && <NewRecipeForm newRecipe={newRecipe} hideRecipeForm={hideRecipeForm} onUpdateForm={onUpdateForm} handleNewRecipe={handleNewRecipe} />}
-      {selectedRecipe && <RecipeFull selectedRecipe={selectedRecipe} handleUnselectRecipe={handleUnselectRecipe} onUpdateForm={onUpdateForm} handleUpdateRecipe={handleUpdateRecipe} />}
+      {selectedRecipe && <RecipeFull selectedRecipe={selectedRecipe} handleUnselectRecipe={handleUnselectRecipe} onUpdateForm={onUpdateForm} handleUpdateRecipe={handleUpdateRecipe} handleDeleteRecipe={handleDeleteRecipe} />}
       {!selectedRecipe && !showNewRecipeForm && (
         <div className="recipe-list">
           {recipes.map((recipe) => (
