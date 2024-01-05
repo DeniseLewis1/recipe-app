@@ -1,4 +1,6 @@
-# Getting Started with your Flask / React project
+# Recipe App
+
+![App image](./src/images/screenshot-main.png)
 
 This project uses Create-React-App, Flask and SQLite.
 
